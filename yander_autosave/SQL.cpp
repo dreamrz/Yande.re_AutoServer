@@ -382,6 +382,14 @@ void SQL::createtable(void)
         retcode = SQLExecDirect(hstmt, (SQLWCHAR*)sqlcmd.c_str(), SQL_NTSL);
         SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
     }
+    //----------第三步创建一个用户----------
+    sqlcmd = L"INSERT INTO [yandere].[dbo].[LoginUser] ([loginuser], [loginpassword], [memorandum], [tokey], [time]) VALUES ('admin', '21232f297a57a5a743894a0e4a801fc3', '', '', GETDATE())";
+    retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+    if (SQL_SUCCESS == retcode)
+    {
+        retcode = SQLExecDirect(hstmt, (SQLWCHAR*)sqlcmd.c_str(), SQL_NTSL);
+        SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+    }
 }
 
 std::wstring SQL::s2ws(const std::string& s)
