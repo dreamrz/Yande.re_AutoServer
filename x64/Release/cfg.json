@@ -1,0 +1,31 @@
+{
+    "ImageRootPath": "D:\\DownImage\\image\\",
+    "ImageRootPath说明": "存放图片的根目录,双斜杠\\表示一个,末尾添加双斜杠 (目录要存在)",
+
+    "WebPort": 8999,
+    "WebPort说明": "http网页的端口",
+
+    "ODBCname": "yande",
+    "ODBCname说明": "64位ODBC数据源名字",
+
+    "ODBCuser": "sa",
+    "ODBCuser说明": "数据库用户名",
+
+    "ODBCpassword": "ranliang",
+    "ODBCpassword说明": "数据库密码",
+
+    "WorkTimeSec": 60,
+    "WorkTimeSec说明":"检查是否有新数据需要处理的周期(秒)",
+
+    "DownloadTimeoutSec": 30,
+    "DownloadTimeoutSec说明":"抓取链接和下载超时(秒)",
+	
+	"LoginTimeoutSec": 7200,
+	"LoginTimeoutSec说明": "用户登录后不操作的超时(秒)",
+	
+	"Proxy": "127.0.0.1:10809",
+	"Proxy说明:": "本地服务器代理地址,主要用于翻墙软件.留空表示不使用.",
+	"Proxy说明2:": "注意如果指向127.0.0.1查看本地代理软件有没有启动.",
+	"Proxy说明3:": "比如v2rayN软件,它显示在窗口最下边HTTP:这里",
+	"Proxy说明4:": "它不是指软件实际链接的服务器,而是本地转发的那个"
+}
