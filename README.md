@@ -29,3 +29,6 @@ http://rlzl.net
 支持`Windows7`或`Windows Server 2016`及以上<br>
 数据要求为`SQL Server2008`及以上,建议使用`Express`版本.<br>
 (免费,可用于生产环境,功能小对服务器硬件压力低)<br>
+
+# 怎么使用
+参见[wiki说明](https://github.com/dreamrz/Yande.re_AutoServer/wiki)
