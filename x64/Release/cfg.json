@@ -1,8 +1,8 @@
 {
-    "ImageRootPath": "D:\\DownImage\\image\\",
+    "ImageRootPath": "D:\\PUBLIC\\image\\",
     "ImageRootPath说明": "存放图片的根目录,双斜杠\\表示一个,末尾添加双斜杠 (目录要存在)",
 
-    "WebPort": 8999,
+    "WebPort": 80,
     "WebPort说明": "http网页的端口",
 
     "ODBCname": "yande",
@@ -11,7 +11,7 @@
     "ODBCuser": "sa",
     "ODBCuser说明": "数据库用户名",
 
-    "ODBCpassword": "ranliang",
+    "ODBCpassword": "123456",
     "ODBCpassword说明": "数据库密码",
 
     "WorkTimeSec": 60,

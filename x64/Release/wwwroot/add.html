@@ -1,0 +1,153 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="post.js"></script>
+    <style>
+        .sub {
+            margin-bottom: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        function addcallback(state, text) {
+            switch (state) {
+                case 1:
+                    var jsonObj = JSON.parse(text);
+                    switch (jsonObj.error) {
+                        case 0:
+                            document.getElementById("addimage").innerHTML = '<font color="#0000FF">增加编号: ' + document.getElementById('number').value + ' 成功</font>';
+                            break;
+                        case 1:
+                            document.getElementById("addimage").innerHTML = '<font color="#FF0000">' + document.getElementById('number').value + ' 该编号已经存在.</font>';
+                            break;
+                        case 2:
+                            document.getElementById("addimage").innerHTML = '<font color="#FF0000">错误,可能超时,请刷新后重新登录</font>';
+                            break;
+                    }
+                    break;
+                case 2:
+                    document.getElementById("addimage").innerHTML = '<font color="#FF0000">请求失败,错误代码: ' + text + '</font>';
+                    break;
+                case 3:
+                    document.getElementById("addimage").innerHTML = '<font color="#FF0000">请求超时,无法链接服务器.</font>';
+                    break;
+            }
+            document.getElementById('number').value = '';
+        };
+
+        function buttonadd() {
+            if (document.getElementById('number').value.length > 0) {
+                if (document.getElementById('number').value)
+                    document.getElementById("addimage").innerHTML = '<font color="#0000FF">正在登录请稍后...</font>';
+                var json = '{"user":"';
+                json += window.parent.mywebuser;
+                json += '","tokey":"';
+                json += window.parent.mywebtokey;
+                json += '","number":';
+                json += document.getElementById('number').value;
+                json += '}';
+                RZHttpRequest('/add', 8000, 'POST', json, addcallback);
+            }
+        };
+
+        function datacallback(state, text) {
+            switch (state) {
+                case 1:
+                    var jsonObj = JSON.parse(text);
+                    switch (jsonObj.error) {
+                        case 0:
+                            var all = jsonObj.all;
+                            var analyse = jsonObj.analyse;
+                            var mdownload = jsonObj.download;
+                            document.getElementById("imagedata").innerHTML = '全部拥有: ' + all + '<br>还未抓取url: ' + (all - analyse) + '<br>还未下载的: ' + (all - mdownload);
+                            break;
+                        case 1:
+                            document.getElementById("imagedata").innerHTML = '<font color="#FF0000">错误,可能超时,请刷新后重新登录</font>';
+                            break;
+                    }
+                    break;
+                case 2:
+                    document.getElementById("imagedata").innerHTML = '<font color="#FF0000">请求失败,错误代码: ' + text + '</font>';
+                    break;
+                case 3:
+                    document.getElementById("imagedata").innerHTML = '<font color="#FF0000">请求超时,无法链接服务器.</font>';
+                    break;
+            }
+        };
+
+        function buttondata() {
+            document.getElementById("imagedata").innerHTML = '<font color="#0000FF">正在登录请稍后...</font>';
+            var json = '{"user":"';
+            json += window.parent.mywebuser;
+            json += '","tokey":"';
+            json += window.parent.mywebtokey;
+            json += '"}';
+            RZHttpRequest('/system', 8000, 'POST', json, datacallback);
+        };
+
+        function memorandumcallback(state, text) {
+            switch (state) {
+                case 1:
+                    var jsonObj = JSON.parse(text);
+                    switch (jsonObj.error) {
+                        case 0:
+                            document.getElementById("changememorandum").innerHTML = '<font color="#0000FF">提交成功.</font>';
+                            break;
+                        case 1:
+                            document.getElementById("changememorandum").innerHTML = '<font color="#FF0000">错误,可能超时,请刷新后重新登录</font>';
+                            break;
+                    }
+                    break;
+                case 2:
+                    document.getElementById("changememorandum").innerHTML = '<font color="#FF0000">请求失败,错误代码: ' + text + '</font>';
+                    break;
+                case 3:
+                    document.getElementById("changememorandum").innerHTML = '<font color="#FF0000">请求超时,无法链接服务器.</font>';
+                    break;
+            }
+        };
+
+        function buttonmemorandum() {
+            document.getElementById("changememorandum").innerHTML = '<font color="#0000FF">正在更新请稍后...</font>';
+            var json = '{"user":"';
+            json += window.parent.mywebuser;
+            json += '","tokey":"';
+            json += window.parent.mywebtokey;
+            json += '","memorandum":"';
+            json += document.getElementById('memorandum').value;
+            json += '"}';
+            RZHttpRequest('/update', 8000, 'POST', json, memorandumcallback);
+        };
+
+    </script>
+
+    <div class='sub'>
+        -------增加图片-------<br><br>
+        url编号: <input type='text' id='number' oninput="value=value.replace(/[^\d]/g,'')" maxlength='10'
+            onkeydown='if(event.keyCode==13) {buttonadd()}'> (可以按回车添加)<br><br>
+        <button type='button' onclick='buttonadd()'>增加</button>
+    </div>
+
+    <div class='sub' id='addimage'>----------</div>
+
+    <div class='sub'>
+        -------修改备注-------<br><br>
+        <textarea id="memorandum" style="height: 200px;width: 300px;resize: none;">
+        </textarea><br><br>
+        <button type='button' onclick='buttonmemorandum()'>修改</button>
+    </div>
+
+    <div class='sub' id='changememorandum'>----------</div>
+
+    <div class='sub'>
+        -------当前状态-------<br><br>
+        <button type='button' onclick='buttondata()'>刷新</button>
+    </div>
+
+    <div class='sub' id='imagedata'>----------</div>
+</body>
+
+</html>

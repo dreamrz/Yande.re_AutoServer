@@ -1,0 +1,113 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="post.js"></script>
+    <script src="md5.js"></script>
+    <style>
+        .sub {
+            margin-bottom: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        String.prototype.replaceAll = function (s1, s2) {
+            return this.replace(new RegExp(s1, "gm"), s2);
+        }
+
+        function logincallback(state, text) {
+            text = text.replaceAll("\n", "<br/>");
+            switch (state) {
+                case 1:
+                    var jsonObj = JSON.parse(text);
+                    if (jsonObj.error === 1) {
+                        document.getElementById("login").innerHTML = '<font color="#FF0000">用户名或密码错误!</font>';
+                    }
+                    else {
+                        window.parent.mywebuser = document.getElementById('username').value;
+                        window.parent.mywebtokey = jsonObj.tokey;
+                        window.parent.mywebmemorandum = jsonObj.memorandum.replaceAll("<br/>", "\n");
+
+                        window.parent.postMessage('done', '*');
+                    }
+                    break;
+                case 2:
+                    document.getElementById("login").innerHTML = '<font color="#FF0000">请求失败,错误代码: ' + text + '</font>';
+                    break;
+                case 3:
+                    document.getElementById("login").innerHTML = '<font color="#FF0000">请求超时,无法链接服务器.</font>';
+                    break;
+            }
+        };
+
+        function buttonLogin() {
+            document.getElementById("login").innerHTML = '<font color="#0000FF">正在登录请稍后...</font>';
+            var json = '{"user":"';
+            json += document.getElementById('username').value;
+            json += '","password":"';
+            json += md5(document.getElementById('pwd').value);
+            json += '"}';
+            RZHttpRequest('/login', 8000, 'POST', json, logincallback);
+        };
+
+        function changecallback(state, text) {
+            switch (state) {
+                case 1:
+                    var jsonObj = JSON.parse(text);
+                    if (jsonObj.error === 1) {
+                        document.getElementById("changeuser").innerHTML = '<font color="#FF0000">用户名或密码错误!</font>';
+                    }
+                    else {
+                        document.getElementById("changeuser").innerHTML = '<font color="#0000FF">修改成功</font>';
+                    }
+                    break;
+                case 2:
+                    document.getElementById("changeuser").innerHTML = '<font color="#FF0000">请求失败,错误代码: ' + text + '</font>';
+                    break;
+                case 3:
+                    document.getElementById("changeuser").innerHTML = '<font color="#FF0000">请求超时,无法链接服务器.</font>';
+                    break;
+            }
+        };
+
+        function buttonchange() {
+            document.getElementById("changeuser").innerHTML = '<font color="#0000FF">正在尝试修改...</font>';
+            var json = '{"oldUser":"';
+            json += document.getElementById('ousername').value;
+            json += '","oldPassword":"';
+            json += md5(document.getElementById('opwd').value);
+            json += '","newUser":"';
+            json += document.getElementById('nusername').value;
+            json += '","newPassword":"';
+            json += md5(document.getElementById('npwd').value);
+            json += '"}';
+            RZHttpRequest('/admin', 8000, 'POST', json, changecallback);
+        };
+
+
+    </script>
+
+    <div class='sub'>
+        -------用户登录-------<br><br>
+        用户名: <input type='text' id='username'><br><br>
+        密码: <input type='password' id='pwd'><br><br>
+        <button type='button' onclick='buttonLogin()'>登录</button>
+    </div>
+
+    <div class='sub' id='login'>----------</div>
+
+    <div class='sub'>
+        -------修改密码-------<br><br>
+        旧用户名: <input type='text' id='ousername'><br><br>
+        旧密码: <input type='password' id='opwd'><br><br>
+        新用户名: <input type='text' id='nusername'><br><br>
+        新密码: <input type='password' id='npwd'><br><br>
+        <button type='button' onclick='buttonchange()'>修改</button>
+    </div>
+
+    <div class='sub' id='changeuser'>----------</div>
+</body>
+
+</html>

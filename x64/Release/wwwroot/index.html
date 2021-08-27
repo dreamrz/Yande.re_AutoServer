@@ -1,1 +1,49 @@
-123123wfdsfsdffer3gr
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="post.js"></script>
+    <script src="md5.js"></script>
+    <style>
+        .p1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400;
+            height: 630;
+        }
+        .p2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400;
+            height: 900;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='iframelogin' class='p1'>
+        <iframe id='loginFrame' allowfullscreen='true' webkitallowfullscreen='true' mozallowfullscreen='true'
+            width='100%' height='100%' oallowfullscreen='true' msallowfullscreen='true' name='loginFrame' scrolling='no'
+            frameborder='0' src='login.html'></iframe>
+    </div>
+    <div id='iframeadd' class='p2'>
+        <iframe id='addFrame' allowfullscreen='true' webkitallowfullscreen='true' mozallowfullscreen='true' width='100%'
+            height='100%' oallowfullscreen='true' msallowfullscreen='true' name='addFrame' scrolling='no'
+            frameborder='0' src='add.html'></iframe>
+    </div>
+
+    <script>
+        document.getElementById('iframeadd').style.visibility = 'hidden';
+        window.addEventListener('message', function (e) {
+            if (e.data === 'done') {
+                document.getElementById("iframelogin").style.visibility = "hidden";
+                document.getElementById("iframeadd").style.visibility = "visible";
+                document.getElementById('addFrame').contentWindow.document.getElementById("memorandum").innerHTML = window.parent.mywebmemorandum;
+            }
+        });
+    </script>
+</body>
+
+</html>
