@@ -26,7 +26,8 @@ unsigned int __stdcall SERVER::AnalyseThread(void* pM)
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, analysecallback);
 				curl_easy_setopt(curl, CURLOPT_WRITEDATA, &html);
 				curl_easy_setopt(curl, CURLOPT_TIMEOUT, T->READCFG::GetCFG().DownloadTimeoutSec);
-				curl_easy_setopt(curl, CURLOPT_PROXY, T->READCFG::GetCFG().proxy);
+				if (std::string(T->READCFG::GetCFG().proxy).size() > 0)
+					curl_easy_setopt(curl, CURLOPT_PROXY, T->READCFG::GetCFG().proxy);
 				CURLcode res = curl_easy_perform(curl);
 				if (res == CURLE_OK)
 				{

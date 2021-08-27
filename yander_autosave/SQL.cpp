@@ -235,6 +235,40 @@ SQL::STATISTICAL SQL::getimage(const char* user, const char* tokey)
     return statistical;
 }
 
+bool SQL::changeuser(const char* ouser, const char* opwd, const char* nuser, const char* npwd)
+{
+    bool s = true;
+    sqlcmd = L"DECLARE @olduser nvarchar(50) SET @olduser = '";
+    sqlcmd += s2ws(ouser);
+    sqlcmd += L"'\r\nDECLARE @oldpwd nvarchar(32) SET @oldpwd = '";
+    sqlcmd += s2ws(opwd);
+    sqlcmd += L"'\r\nDECLARE @newuser nvarchar(50) SET @newuser = '";
+    sqlcmd += s2ws(nuser);
+    sqlcmd += L"'\r\nDECLARE @newpwd nvarchar(32) SET @newpwd = '";
+    sqlcmd += s2ws(npwd);
+    sqlcmd += L"'\r\nUPDATE [yandere].[dbo].[LoginUser] SET [loginpassword] = @newpwd, [loginuser] = @newuser WHERE [loginuser] = @olduser AND [loginpassword] = @oldpwd";
+
+    SQLLEN cbstate;
+    retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+    if (SQL_SUCCESS == retcode)
+    {
+        retcode = SQLExecDirect(hstmt, (SQLWCHAR*)sqlcmd.c_str(), SQL_NTSL);
+        if (SQL_SUCCESS == retcode)
+        {
+            SQLRowCount(hstmt, &cbstate);
+            cbstate >= 1 ? s = true : s = false; //影响一条以上说明成功
+
+        }
+        else
+            s = false;
+        SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+    }
+    else
+        s = false;
+
+    return s;
+}
+
 int SQL::getanalysenumber(void)
 {
     int p_n = 0;

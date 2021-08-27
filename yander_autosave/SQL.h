@@ -29,6 +29,7 @@ public:
 	bool updatememorandum(const char* user, const char* tokey, const char* memorandum);//更新日志 没有用户或超时返回false
 	bool addnewnumber(const char* user, const char* tokey, int number);//增加一个图片编号, 已经存在返回false
 	STATISTICAL getimage(const char* user, const char* tokey);// 查询当前图片的统计信息
+	bool changeuser(const char* ouser, const char* opwd, const char* nuser, const char* npwd);//修改用户名和密码
 	
 	//下面数据库接口给内部处理逻辑使用的
 	int getanalysenumber(void);//获取一个还没抓取url的编号,无需处理则返回0

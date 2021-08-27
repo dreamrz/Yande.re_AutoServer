@@ -156,4 +156,39 @@ void WEB::HttpInterface(void)
         else
             res.set_content(string_To_UTF8("{\"error\":1}"), "text/plain");
         });
+
+    //修改用户名和密码
+    svr.Post("/admin", [&](const Request& req, Response& res) {
+        Sleep(2000);//简单防御一下
+        if (req.body.at(0) == '{')
+        {
+            Json::CharReaderBuilder b;
+            Json::CharReader* reader(b.newCharReader());
+            Json::Value root;
+            JSONCPP_STRING errs;
+            bool ok = reader->parse(req.body.c_str(), req.body.c_str() + req.body.size(), &root, &errs);
+            if (ok && errs.size() == 0)
+            {
+                if (!root["oldUser"].isNull() && !root["oldPassword"].isNull() && !root["newUser"].isNull() && !root["newPassword"].isNull())
+                {
+                    if (root["oldUser"].isString() && root["oldPassword"].isString() && root["newUser"].isString() && root["newPassword"].isString())
+                    {
+                        bool s = SQL::changeuser(UTF8_To_string(root["oldUser"].asString()).c_str(), UTF8_To_string(root["oldPassword"].asString()).c_str(), UTF8_To_string(root["newUser"].asString()).c_str(), UTF8_To_string(root["newPassword"].asString()).c_str());
+                        if (s)
+                            res.set_content(string_To_UTF8("{\"error\":0}"), "text/plain");
+                        else
+                            res.set_content(string_To_UTF8("{\"error\":1}"), "text/plain");
+                    }
+                    else
+                        res.set_content(string_To_UTF8("{\"error\":1}"), "text/plain");
+                }
+                else
+                    res.set_content(string_To_UTF8("{\"error\":1}"), "text/plain");
+            }
+            else
+                res.set_content(string_To_UTF8("{\"error\":1}"), "text/plain");
+        }
+        else
+            res.set_content(string_To_UTF8("{\"error\":1}"), "text/plain");
+        });
 }
