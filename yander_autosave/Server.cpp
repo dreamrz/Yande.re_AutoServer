@@ -15,6 +15,9 @@ unsigned int __stdcall SERVER::AnalyseThread(void* pM)
 			if (!number)break; //中断到下一个周期去
 			//https://yande.re/post/show/
 			std::string web = "https://yande.re/post/show/" + std::to_string(number);
+
+			printf("开始抓取地址: %s", web.c_str());
+
 			CURL* curl = curl_easy_init();
 			if (curl)
 			{
@@ -44,27 +47,18 @@ unsigned int __stdcall SERVER::AnalyseThread(void* pM)
 				}
 				else
 					sql.setretries(number);//抓取失败,增加一次失败次数
+				printf("事件完成\n");
 				curl_global_cleanup();
 			}
 		}
-		Sleep(T->READCFG::GetCFG().WorkTimeSec * 1000);//在除信号通知的最省资源方法
-	}
-	return 0;
-}
 
-unsigned int __stdcall SERVER::DownloadThread(void* pM)
-{
-	SQL sql;
-
-	SERVER* T = (SERVER*)pM;
-	while (T->APP)
-	{
 		while (true)
 		{
 			int number;
 			std::string name;
 			std::string url = sql.getdownloadnumber(number, name);
 			if (!number)break; //中断到下一个周期去
+			printf("开始下载:%d\n", number);
 
 			FILE* file = nullptr;
 			fopen_s(&file, std::string(T->READCFG::GetCFG().ImageRootPath + name).c_str(), "wb+");//创建模式
@@ -89,6 +83,59 @@ unsigned int __stdcall SERVER::DownloadThread(void* pM)
 				}
 				else
 					sql.setretries(number);//抓取失败,增加一次失败次数
+
+				printf("事件完成\n");
+				curl_global_cleanup();
+			}
+			if (file != nullptr)fclose(file);
+		}
+
+		Sleep(T->READCFG::GetCFG().WorkTimeSec * 1000);//在除信号通知的最省资源方法
+	}
+	return 0;
+}
+
+unsigned int __stdcall SERVER::DownloadThread(void* pM)
+{
+	SQL sql;
+
+	SERVER* T = (SERVER*)pM;
+	CURL* curl = curl_easy_init();
+	while (T->APP)
+	{
+		while (true)
+		{
+			int number;
+			std::string name;
+			std::string url = sql.getdownloadnumber(number, name);
+			if (!number)break; //中断到下一个周期去
+			printf("开始下载编号:%d   ", number);
+
+			FILE* file = nullptr;
+			fopen_s(&file, std::string(T->READCFG::GetCFG().ImageRootPath + name).c_str(), "wb+");//创建模式
+
+			
+			if (curl && file != nullptr)
+			{
+				char m_url[256];
+				memset(m_url, 0, sizeof(m_url));
+				memcpy(m_url, url.c_str(), url.size());
+				curl_easy_setopt(curl, CURLOPT_URL, m_url);
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, nullptr);
+
+				curl_easy_setopt(curl, CURLOPT_TIMEOUT, T->READCFG::GetCFG().DownloadTimeoutSec);
+				curl_easy_setopt(curl, CURLOPT_PROXY, T->READCFG::GetCFG().proxy);
+				CURLcode res = curl_easy_perform(curl);
+				if (res == CURLE_OK)
+				{
+					curl_easy_cleanup(curl);
+					sql.setimagedone(number);
+				}
+				else
+					sql.setretries(number);//抓取失败,增加一次失败次数
+
+				printf("事件完成\n");
 				curl_global_cleanup();
 			}
 			if (file != nullptr)fclose(file);

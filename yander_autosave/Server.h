@@ -24,7 +24,7 @@ public:
 	{
 		APP = true;
 		_beginthreadex(nullptr, 0, this->AnalyseThread, this, 0, nullptr);
-		_beginthreadex(nullptr, 0, this->DownloadThread, this, 0, nullptr);
+		//_beginthreadex(nullptr, 0, this->DownloadThread, this, 0, nullptr);//libcurl居然不是线程安全的,这里合并到上面去了
 
 		if (!web.run()) //最后一个启动
 		{
