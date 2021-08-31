@@ -156,7 +156,7 @@ SERVER::image_d SERVER::GetUrl(std::string html)
 {
 	image_d d;
 	d.succeed = false;
-	std::string::size_type m = html.find("\">Download PNG");
+	std::string::size_type m = html.find("\">Download PNG");//png形式
 	if (m != std::string::npos) //尝试找png文件
 	{
 		html.erase(html.begin() + m, html.end());
@@ -182,7 +182,7 @@ SERVER::image_d SERVER::GetUrl(std::string html)
 	}
 	else
 	{
-		m = html.find("\">Download larger version");
+		m = html.find("\">Download larger version");//jpg
 		if (m != std::string::npos)//尝试找jpg文件
 		{
 			html.erase(html.begin() + m, html.end());
@@ -209,8 +209,36 @@ SERVER::image_d SERVER::GetUrl(std::string html)
 		}
 		else
 		{
-			//既没有jpg也没有png????
-			//这里可能会是要求登录,又或者被删除的
+			m = html.find("\">Image (");//jpg的另一种形式
+			if (m != std::string::npos)//尝试找jpg文件
+			{
+				html.erase(html.begin() + m, html.end());
+				for (int i = html.size(); i; i--)
+				{
+					if (html.at(i - 1) == '\"')
+					{
+						html.erase(html.begin(), html.begin() + i);
+						break;
+					}
+				}
+				d.url = html;
+				for (int i = html.size(); i; i--)
+				{
+					if (html.at(i - 1) == '/')
+					{
+						html.erase(html.begin(), html.begin() + i);
+						break;
+					}
+				}
+
+				d.name = html;
+				d.succeed = true;
+			}
+			else
+			{
+				//既没有jpg也没有png????
+				//这里可能会是要求登录,又或者被删除的
+			}
 		}
 	}
 

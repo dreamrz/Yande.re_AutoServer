@@ -1,5 +1,5 @@
 {
-    "ImageRootPath": "D:\\PUBLIC\\image\\",
+    "ImageRootPath": "D:\\DownImage\\image\\",
     "ImageRootPath说明": "存放图片的根目录,双斜杠\\表示一个,末尾添加双斜杠 (目录要存在)",
 
     "WebPort": 80,
